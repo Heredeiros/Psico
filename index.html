@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#0f172a">
+<title>Registro personal</title>
+<style>
+:root{color-scheme:dark;--bg:#0f172a;--panel:#1e293b;--panel2:#0b1220;--muted:#94a3b8;--line:#334155;--accent:#818cf8;--green:#16a34a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f8fafc;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+.wrap{max-width:1180px;margin:auto;padding:22px 16px 50px}h1{font-size:clamp(1.7rem,4vw,2.2rem);margin:0 0 8px}h2{font-size:1.25rem;margin:0 0 16px}.sub{color:#cbd5e1;margin:0 0 20px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+button,.button{border:0;border-radius:9px;padding:10px 14px;color:white;background:#475569;font-weight:650;cursor:pointer;font-size:.92rem}button:hover{filter:brightness(1.12)}.primary{background:#4f46e5}.success{background:#15803d}.danger{background:#b91c1c}.secondary{background:#334155}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}.page-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.history-row{display:grid;grid-template-columns:145px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px;margin-bottom:8px}.history-date{font-size:.82rem;color:#a5b4fc;white-space:nowrap}.history-thought{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f8fafc}.history-detail{margin:-2px 0 10px;padding:14px;background:#172033;border:1px solid var(--line);border-radius:0 0 10px 10px}.history-detail p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0 12px}.history-detail .label{font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;font-weight:750}.history-item{margin-bottom:10px}.history-row[aria-expanded="true"]{border-radius:10px 10px 0 0;margin-bottom:0}.history-row .badge{font-size:.8rem}@media(max-width:600px){.history-row{grid-template-columns:1fr auto;gap:4px 10px}.history-date{grid-column:1/-1}.history-thought{grid-column:1/2}.history-row .badge{grid-column:2;grid-row:2}}.panel{background:var(--panel);border:1px solid #293548;border-radius:15px;padding:20px;min-width:0}
+label{display:block;color:#cbd5e1;font-size:.9rem;font-weight:650;margin:0 0 6px}textarea,input,select{width:100%;border:1px solid #475569;background:#f8fafc;color:#111827;border-radius:8px;padding:10px 11px;font:inherit;font-size:16px}textarea{resize:vertical;min-height:78px}input[type="date"],input[type="number"]{min-height:43px}.field{margin-bottom:14px}.degree-row{display:flex;align-items:center;gap:12px}.degree-row input{max-width:130px}.hint{font-size:.8rem;color:var(--muted);margin-top:5px}.filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.filters .wide{grid-column:1/-1}.filter-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.count{color:#cbd5e1;font-size:.9rem;margin:14px 0}.entry{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:15px;margin-bottom:12px}.entry-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.stamp{font-size:.82rem;color:#a5b4fc}.badge{display:inline-flex;align-items:center;justify-content:center;min-width:44px;border-radius:99px;background:#312e81;color:#e0e7ff;padding:5px 9px;font-weight:800}.entry p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0 12px}.entry .label{font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;font-weight:750}.entry-actions{display:flex;justify-content:flex-end;margin-top:8px}.empty{padding:26px;text-align:center;border:1px dashed #475569;border-radius:12px;color:#94a3b8}.form-buttons{display:flex;gap:8px;flex-wrap:wrap}.hidden{display:none!important}.privacy{font-size:.8rem;color:#94a3b8;margin-top:12px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.panel{padding:16px}.filters{grid-template-columns:1fr 1fr}}@media(max-width:440px){.filters{grid-template-columns:1fr}.filters .wide{grid-column:auto}.wrap{padding:16px 10px 35px}.entry-head{gap:8px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>📝 Registro personal</h1>
+  <p class="sub">Registra una situación, lo que piensas y sientes, qué haces después y el grado que le asignas.</p>
+  <div class="page-nav">
+    <button class="primary" id="showFormBtn" type="button">➕ Nueva entrada</button>
+    <button class="secondary" id="showHistoryBtn" type="button">📚 Ver histórico</button>
+  </div>
+  <div class="toolbar" id="backupToolbar">
+    <button class="success" id="exportBtn">📤 Exportar copia</button>
+    <button class="secondary" id="importBtn">📥 Importar copia</button>
+    <button class="danger" id="clearBtn">Borrar todo el historial</button>
+    <input id="importFile" type="file" accept="application/json,.json" class="hidden">
+  </div>
+
+  <div class="layout">
+    <section class="panel" id="formPage">
+      <h2 id="formTitle">➕ Nueva entrada</h2>
+      <form id="entryForm">
+        <div class="field"><label for="situation">1. Situación</label><textarea id="situation" required maxlength="5000" placeholder="¿Qué ha ocurrido?"></textarea></div>
+        <div class="field"><label for="thought">2. Qué pienso</label><textarea id="thought" required maxlength="5000" placeholder="¿Qué pensamientos has tenido?"></textarea></div>
+        <div class="field"><label for="feeling">3. Qué siento</label><textarea id="feeling" required maxlength="5000" placeholder="¿Qué emociones o sensaciones notas?"></textarea></div>
+        <div class="field"><label for="after">4. Qué hago después</label><textarea id="after" required maxlength="5000" placeholder="¿Qué haces o qué te gustaría hacer después?"></textarea></div>
+        <div class="field">
+          <label for="entryDateTime">Fecha y hora de la entrada</label>
+          <input id="entryDateTime" type="datetime-local" required>
+          <p class="hint">Por defecto aparece la fecha y hora actuales. Puedes cambiarlas antes de guardar.</p>
+        </div>
+        <div class="field">
+          <label for="degree">5. Grado (del 1 al 10)</label>
+          <div class="degree-row"><input id="degree" type="number" min="1" max="10" step="1" required inputmode="numeric" placeholder="1–10"><span class="hint">Introduce un número entero entre 1 y 10.</span></div>
+        </div>
+        <div class="form-buttons"><button class="primary" type="submit" id="saveBtn">💾 Guardar entrada</button><button type="button" id="cancelEditBtn" class="secondary hidden">Cancelar edición</button></div>
+        <p class="privacy">Los registros se guardan en el almacenamiento local de este navegador y dispositivo. Exporta una copia periódicamente para tener una copia de seguridad.</p>
+      </form>
+    </section>
+
+    <section class="panel hidden" id="historyPage">
+      <h2>📚 Histórico y filtros</h2>
+      <div class="filters">
+        <div class="wide"><label for="filterSituation">Situación contiene</label><input id="filterSituation" type="search" placeholder="Buscar palabras…"></div>
+        <div><label for="filterThought">Qué pienso contiene</label><input id="filterThought" type="search" placeholder="Buscar…"></div>
+        <div><label for="filterFeeling">Qué siento contiene</label><input id="filterFeeling" type="search" placeholder="Buscar…"></div>
+        <div class="wide"><label for="filterAfter">Qué hago después contiene</label><input id="filterAfter" type="search" placeholder="Buscar…"></div>
+        <div><label for="filterMin">Grado mínimo</label><select id="filterMin"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
+        <div><label for="filterMax">Grado máximo</label><select id="filterMax"><option value="">Cualquiera</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
+        <div><label for="dateFrom">Desde el día</label><input id="dateFrom" type="date"></div>
+        <div><label for="dateTo">Hasta el día</label><input id="dateTo" type="date"></div>
+        <div class="wide"><label for="sortOrder">Orden del histórico</label><select id="sortOrder"><option value="newest">Más recientes primero</option><option value="oldest">Más antiguas primero</option></select></div>
+      </div>
+      <div class="filter-actions"><button type="button" id="resetFiltersBtn" class="secondary">Limpiar filtros</button></div>
+      <div id="resultCount" class="count" aria-live="polite"></div>
+      <div id="history"></div>
+    </section>
+  </div>
+</main>
+<script>
+(() => {
+  const STORAGE_KEY = "registroPersonal_v1";
+  let entries = [];
+  let editingId = null;
+  const $ = id => document.getElementById(id);
+  const formFields = ["situation","thought","feeling","after","degree"];
+  const filterFields = ["filterSituation","filterThought","filterFeeling","filterAfter","filterMin","filterMax","dateFrom","dateTo","sortOrder"];
+  function showPage(page) {
+    const showHistory = page === "history";
+    $("formPage").classList.toggle("hidden", showHistory);
+    $("historyPage").classList.toggle("hidden", !showHistory);
+    $("backupToolbar").classList.toggle("hidden", !showHistory);
+    $("showFormBtn").className = showHistory ? "secondary" : "primary";
+    $("showHistoryBtn").className = showHistory ? "primary" : "secondary";
+    if (showHistory) renderHistory();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  $("showFormBtn").addEventListener("click", () => showPage("form"));
+  $("showHistoryBtn").addEventListener("click", () => showPage("history"));
+
+  function load() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      entries = Array.isArray(parsed) ? parsed.filter(e => e && typeof e === "object" && e.id && e.createdAt) : [];
+    } catch { entries = []; }
+  }
+  function persist() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); return true; }
+    catch (err) { alert("No se ha podido guardar. Puede que el almacenamiento del navegador esté lleno o bloqueado. Exporta una copia y libera espacio."); return false; }
+  }
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  }
+  function formatDate(iso) {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "Fecha no disponible";
+    return new Intl.DateTimeFormat("es-ES",{dateStyle:"medium",timeStyle:"short"}).format(d);
+  }
+  function localDateTimeValue(date = new Date()) {
+    const pad = n => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+  function formValues() {
+    return {
+      situation: $("situation").value.trim(),
+      thought: $("thought").value.trim(),
+      feeling: $("feeling").value.trim(),
+      after: $("after").value.trim(),
+      degree: Number($("degree").value)
+    };
+  }
+  function resetForm() {
+    $("entryForm").reset(); editingId = null;
+    $("entryDateTime").value = localDateTimeValue();
+    $("formTitle").textContent = "➕ Nueva entrada";
+    $("saveBtn").textContent = "💾 Guardar entrada";
+    $("cancelEditBtn").classList.add("hidden");
+  }
+  $("entryForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const values = formValues();
+    if (!values.situation || !values.thought || !values.feeling || !values.after) {
+      alert("Completa los cuatro campos de texto."); return;
+    }
+    if (!Number.isInteger(values.degree) || values.degree < 1 || values.degree > 10) {
+      alert("El grado debe ser un número entero del 1 al 10."); $("degree").focus(); return;
+    }
+    const chosenDate = new Date($("entryDateTime").value);
+    if (!$("entryDateTime").value || Number.isNaN(chosenDate.getTime())) {
+      alert("Selecciona una fecha y hora válidas."); $("entryDateTime").focus(); return;
+    }
+    const entryTimestamp = chosenDate.toISOString();
+    if (editingId) {
+      const idx = entries.findIndex(e => e.id === editingId);
+      if (idx < 0) { alert("No se encuentra esa entrada."); resetForm(); return; }
+      entries[idx] = {...entries[idx], ...values, createdAt: entryTimestamp, updatedAt: new Date().toISOString()};
+    } else {
+      entries.push({id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)), ...values, createdAt: entryTimestamp});
+    }
+    if (persist()) {
+      resetForm(); renderHistory(); showPage("history");
+    }
+  });
+  $("cancelEditBtn").addEventListener("click", resetForm);
+
+  function beginEdit(id) {
+    const e = entries.find(item => item.id === id);
+    if (!e) return;
+    editingId = id;
+    $("situation").value = e.situation || "";
+    $("thought").value = e.thought || "";
+    $("feeling").value = e.feeling || "";
+    $("after").value = e.after || "";
+    $("degree").value = e.degree;
+    $("entryDateTime").value = localDateTimeValue(new Date(e.createdAt));
+    $("formTitle").textContent = "✏️ Editar entrada";
+    $("saveBtn").textContent = "Guardar cambios";
+    $("cancelEditBtn").classList.remove("hidden");
+    showPage("form");
+  }
+  function removeEntry(id) {
+    if (!confirm("¿Quieres eliminar esta entrada? Esta acción no se puede deshacer.")) return;
+    entries = entries.filter(e => e.id !== id);
+    if (editingId === id) resetForm();
+    if (persist()) renderHistory();
+  }
+  function renderHistory() {
+    const qSituation = $("filterSituation").value.trim().toLocaleLowerCase("es");
+    const qThought = $("filterThought").value.trim().toLocaleLowerCase("es");
+    const qFeeling = $("filterFeeling").value.trim().toLocaleLowerCase("es");
+    const qAfter = $("filterAfter").value.trim().toLocaleLowerCase("es");
+    const min = $("filterMin").value === "" ? null : Number($("filterMin").value);
+    const max = $("filterMax").value === "" ? null : Number($("filterMax").value);
+    const from = $("dateFrom").value;
+    const to = $("dateTo").value;
+    const direction = $("sortOrder").value;
+    let filtered = entries.filter(e => {
+      const day = String(e.createdAt || "").slice(0,10);
+      return String(e.situation || "").toLocaleLowerCase("es").includes(qSituation)
+        && String(e.thought || "").toLocaleLowerCase("es").includes(qThought)
+        && String(e.feeling || "").toLocaleLowerCase("es").includes(qFeeling)
+        && String(e.after || "").toLocaleLowerCase("es").includes(qAfter)
+        && (min === null || Number(e.degree) >= min)
+        && (max === null || Number(e.degree) <= max)
+        && (!from || day >= from) && (!to || day <= to);
+    });
+    filtered.sort((a,b) => direction === "oldest" ? new Date(a.createdAt)-new Date(b.createdAt) : new Date(b.createdAt)-new Date(a.createdAt));
+    $("resultCount").textContent = `Mostrando ${filtered.length} de ${entries.length} entradas`;
+    const history = $("history");
+    if (!filtered.length) {
+      history.innerHTML = `<div class="empty">${entries.length ? "No hay entradas que coincidan con esos filtros." : "Todavía no hay entradas guardadas. Añade la primera con el formulario."}</div>`;
+      return;
+    }
+    history.innerHTML = filtered.map(e => `
+      <div class="history-item">
+        <button type="button" class="history-row" data-toggle="${escapeHTML(e.id)}" aria-expanded="false">
+          <span class="history-date">${escapeHTML(formatDate(e.createdAt))}</span>
+          <span class="history-thought">${escapeHTML((e.thought || "").slice(0,100))}${(e.thought || "").length > 100 ? "…" : ""}</span>
+          <span class="badge">${escapeHTML(e.degree)}/10</span>
+        </button>
+        <div class="history-detail hidden" id="detail-${escapeHTML(e.id)}">
+          <div class="label">1. Situación</div><p>${escapeHTML(e.situation)}</p>
+          <div class="label">2. Qué pienso</div><p>${escapeHTML(e.thought)}</p>
+          <div class="label">3. Qué siento</div><p>${escapeHTML(e.feeling)}</p>
+          <div class="label">4. Qué hago después</div><p>${escapeHTML(e.after)}</p>
+          <div class="entry-actions"><button type="button" class="secondary" data-edit="${escapeHTML(e.id)}">✏️ Editar</button>&nbsp;<button type="button" class="danger" data-delete="${escapeHTML(e.id)}">🗑️ Eliminar</button></div>
+        </div>
+      </div>`).join("");
+    history.querySelectorAll("[data-toggle]").forEach(btn => btn.addEventListener("click", () => {
+      const detail = $("detail-" + btn.dataset.toggle);
+      const opening = detail.classList.contains("hidden");
+      detail.classList.toggle("hidden", !opening);
+      btn.setAttribute("aria-expanded", String(opening));
+    }));
+    history.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => beginEdit(btn.dataset.edit)));
+    history.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => removeEntry(btn.dataset.delete)));
+  }
+  filterFields.forEach(id => $(id).addEventListener("input", renderHistory));
+  $("resetFiltersBtn").addEventListener("click", () => { filterFields.forEach(id => { if (id === "sortOrder") $(id).value = "newest"; else $(id).value = ""; }); renderHistory(); });
+
+  $("exportBtn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify({format:"registroPersonal",version:1,exportedAt:new Date().toISOString(),entries},null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob); const a = document.createElement("a");
+    a.href = url; a.download = `registro_personal_${new Date().toISOString().slice(0,10)}.json`; a.click();
+    setTimeout(() => URL.revokeObjectURL(url),1000);
+  });
+  $("importBtn").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", event => {
+    const file = event.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        const incoming = Array.isArray(data) ? data : data.entries;
+        if (!Array.isArray(incoming) || !incoming.every(e => e && e.id && e.createdAt && Number.isInteger(Number(e.degree)) && Number(e.degree)>=1 && Number(e.degree)<=10)) throw new Error("formato");
+        if (!confirm(`El archivo contiene ${incoming.length} entradas. Aceptar reemplazará el historial actual (${entries.length} entradas). ¿Continuar?`)) return;
+        const old = entries; entries = incoming;
+        if (persist()) renderHistory(); else entries = old;
+      } catch { alert("No se ha podido importar: el archivo no tiene un formato válido de este registro."); }
+      finally { $("importFile").value = ""; }
+    };
+    reader.readAsText(file);
+  });
+  $("clearBtn").addEventListener("click", () => {
+    if (!entries.length) { alert("El historial ya está vacío."); return; }
+    if (!confirm(`Vas a borrar las ${entries.length} entradas guardadas. Esta acción no se puede deshacer. ¿Continuar?`)) return;
+    const old = entries; entries = [];
+    if (persist()) { resetForm(); renderHistory(); } else entries = old;
+  });
+  load(); resetForm(); renderHistory(); showPage("form");
+})();
+</script>
+</body>
+</html>
